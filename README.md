@@ -8,4 +8,4 @@ Snake is a game that many has created before, and that I myself have created sev
 
 ## December 24th, Almost done with snake game;
 
-I have now created most of the gamelogic for the snake game. I am therefore soon ready to start on the other parts of the game. Merry Christmas🌲
+I have now created most of the gamelogic for the snake game. I am therefore soon ready to start on the other parts of the game. I am not sure if this is overengineered or not, but time will tell. It uses more files and code than I usually utilize when creating snake, but it also seems more robust and easy to work on. Merry Christmas🌲
