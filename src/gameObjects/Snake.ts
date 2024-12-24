@@ -1,3 +1,4 @@
+import { HitboxDetector } from "../gameLogicFunctions/HitBoxDetector";
 import { Apple } from "./Apple";
 import { SnakeBodypart } from "./SnakeBodypart";
 import { SnakeHead } from "./SnakeHead";
@@ -9,6 +10,9 @@ export class Snake {
   bodyparts: SnakeBodypart[];
   snakeHead: SnakeHead;
   apple: Apple;
+  hitboxDetector: HitboxDetector;
+  isDead: boolean;
+
   constructor(
     startX: number,
     startY: number,
@@ -22,6 +26,7 @@ export class Snake {
     this.bodyparts = [];
     const snakeHead = new SnakeHead(this.x, this.y, this.direction);
     this.snakeHead = snakeHead;
+    this.isDead = false;
 
     const bodyPart1 = new SnakeBodypart(startX - 1, startY, this.snakeHead);
     const bodyPart2 = new SnakeBodypart(startX - 2, startY, bodyPart1);
@@ -32,12 +37,26 @@ export class Snake {
     this.bodyparts.push(bodyPart3);
 
     this.apple = new Apple(horizontalTilesAmount, verticalTilesAmount, this);
+
+    this.hitboxDetector = new HitboxDetector(horizontalTilesAmount, verticalTilesAmount);
   }
 
   move() {
+    // Moves body
     this.moveBody();
     this.moveHead();
+
+    // Adds new positions to hitbox
+    this.updateHitboxDetector();
+
+    // Check for crashes
     this.checkForApple();
+    this.checkCollisions();
+
+    if (this.isDead) {
+      this.snakeHead.moveHeadBack();
+      return;
+    }
   }
 
   moveHead() {
@@ -53,7 +72,7 @@ export class Snake {
   grow() {
     // Must be called after snake eats fruit, but before its next move
     const tailTip = this.bodyparts[this.bodyparts.length - 1];
-    const newTailTip = new SnakeBodypart(0, 0, tailTip);
+    const newTailTip = new SnakeBodypart(tailTip.x, tailTip.y, tailTip);
     this.bodyparts.push(newTailTip);
   }
 
@@ -66,5 +85,26 @@ export class Snake {
 
   setDirection(newDirection: string) {
     this.snakeHead.setDirection(newDirection);
+  }
+
+  updateHitboxDetector() {
+    this.hitboxDetector.reset();
+    for (let i = 0; i < this.bodyparts.length; i++) {
+      const x = this.bodyparts[i].x;
+      const y = this.bodyparts[i].y;
+      this.hitboxDetector.addOccupiedPosition(x, y);
+    }
+  }
+
+  checkCollisions() {
+    console.log("Markisdead" + " " + this.isDead);
+
+    if (this.hitboxDetector.snakeHeadCollides(this.snakeHead)) {
+      this.isDead = true;
+    }
+  }
+
+  removeTailTip() {
+    this.bodyparts.pop();
   }
 }

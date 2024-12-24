@@ -31,19 +31,28 @@ addKeyInput(body, inputHandler);
 // Creates views for the hierarchy
 const grid = new CanvasView(0, 0, 800, 675, () => drawGrid(gridDrawer, mark));
 
-grid.draw();
-
 // Animation loop for  the game
 let previousDrawing = 0;
 
 function drawNextFrame(timestamp: number) {
-  if (timestamp - previousDrawing >= 500) {
-    previousDrawing = timestamp;
-    mark.move();
-    //console.log(mark.bodyparts[0].x);
-  }
-  grid.draw();
+  main(timestamp);
   requestAnimationFrame(drawNextFrame);
 }
 
 requestAnimationFrame(drawNextFrame);
+
+function main(timestamp: number) {
+  if (timestamp - previousDrawing <= 200) {
+    return;
+  }
+  previousDrawing = timestamp;
+  if (mark.isDead) {
+    mark.removeTailTip();
+    grid.draw();
+    console.log("Helo");
+
+    return;
+  }
+  mark.move();
+  grid.draw();
+}

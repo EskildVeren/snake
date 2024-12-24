@@ -41,4 +41,25 @@ export class SnakeHead {
     }
     return false;
   }
+  public moveHeadBack() {
+    switch (this.direction) {
+      case "up":
+        this.y += 1;
+        break;
+      case "down":
+        this.y -= 1;
+        break;
+      case "left":
+        this.x += 1;
+        break;
+      case "right":
+        this.x -= 1;
+        break;
+
+      default:
+        throw new Error(
+          `Direction not supported. Was ${this.direction}, but only up, down, left or right is supported`
+        );
+    }
+  }
 }

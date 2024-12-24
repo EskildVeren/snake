@@ -12,8 +12,8 @@ export function drawGrid(gridDrawer: GridDrawer, snake: Snake) {
   }
 
   // Draws objects on the grid
-  gridDrawer.drawTile(snake.snakeHead.x, snake.snakeHead.y, "green");
   gridDrawer.drawTile(snake.apple.x, snake.apple.y, "red");
+  gridDrawer.drawTile(snake.snakeHead.x, snake.snakeHead.y, "green");
   snake.bodyparts.forEach((snakeBodypart: SnakeBodypart) => {
     gridDrawer.drawTile(snakeBodypart.x, snakeBodypart.y, "green");
   });
