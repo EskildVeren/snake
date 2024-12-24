@@ -4,39 +4,28 @@ import { SnakeBodypart } from "./SnakeBodypart";
 import { SnakeHead } from "./SnakeHead";
 
 export class Snake {
-  x: number;
-  y: number;
-  direction: string;
   bodyparts: SnakeBodypart[];
   snakeHead: SnakeHead;
   apple: Apple;
   hitboxDetector: HitboxDetector;
   isDead: boolean;
 
-  constructor(
-    startX: number,
-    startY: number,
-    direction: string,
-    horizontalTilesAmount: number,
-    verticalTilesAmount: number
-  ) {
-    this.x = startX;
-    this.y = startY;
-    this.direction = direction;
+  constructor(snakeLength: number, horizontalTilesAmount: number, verticalTilesAmount: number) {
+    const x = Math.floor(horizontalTilesAmount / 2);
+    const y = Math.floor(verticalTilesAmount / 2);
+    this.apple = new Apple(horizontalTilesAmount, verticalTilesAmount, this);
+    this.snakeHead = new SnakeHead(x, y, "right");
     this.bodyparts = [];
-    const snakeHead = new SnakeHead(this.x, this.y, this.direction);
-    this.snakeHead = snakeHead;
     this.isDead = false;
 
-    const bodyPart1 = new SnakeBodypart(startX - 1, startY, this.snakeHead);
-    const bodyPart2 = new SnakeBodypart(startX - 2, startY, bodyPart1);
-    const bodyPart3 = new SnakeBodypart(startX - 3, startY, bodyPart2);
-
-    this.bodyparts.push(bodyPart1);
-    this.bodyparts.push(bodyPart2);
-    this.bodyparts.push(bodyPart3);
-
-    this.apple = new Apple(horizontalTilesAmount, verticalTilesAmount, this);
+    for (let i = 0; i < Math.min(x - 1, snakeLength); i++) {
+      let parentBodypart: SnakeHead | SnakeBodypart = this.snakeHead;
+      if (i > 0) {
+        parentBodypart = this.bodyparts[i - 1];
+      }
+      const newBodypart = new SnakeBodypart(parentBodypart.x - 1, y, parentBodypart);
+      this.bodyparts.push(newBodypart);
+    }
 
     this.hitboxDetector = new HitboxDetector(horizontalTilesAmount, verticalTilesAmount);
   }
@@ -97,8 +86,6 @@ export class Snake {
   }
 
   checkCollisions() {
-    console.log("Markisdead" + " " + this.isDead);
-
     if (this.hitboxDetector.snakeHeadCollides(this.snakeHead)) {
       this.isDead = true;
     }

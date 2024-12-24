@@ -21,7 +21,7 @@ const yTiles = 16;
 
 const gridDrawer = new GridDrawer(800, 675, xTiles, yTiles, 1, ctx);
 
-const mark = new Snake(Math.floor(xTiles / 2), Math.floor(yTiles / 2), "right", xTiles, yTiles);
+const mark = new Snake(5, xTiles, yTiles);
 
 // Extracting body-element and adding keyinput handling to it
 const body = getBody();
@@ -32,7 +32,21 @@ addKeyInput(body, inputHandler);
 const grid = new CanvasView(0, 0, 800, 675, () => drawGrid(gridDrawer, mark));
 
 // Animation loop for  the game
-let previousDrawing = 0;
+let previousDrawingTimestamp = 0;
+
+function main(timestamp: number) {
+  if (timestamp - previousDrawingTimestamp <= 200) {
+    return;
+  }
+  previousDrawingTimestamp = timestamp;
+  if (mark.isDead) {
+    mark.removeTailTip();
+    grid.draw();
+    return;
+  }
+  mark.move();
+  grid.draw();
+}
 
 function drawNextFrame(timestamp: number) {
   main(timestamp);
@@ -40,19 +54,3 @@ function drawNextFrame(timestamp: number) {
 }
 
 requestAnimationFrame(drawNextFrame);
-
-function main(timestamp: number) {
-  if (timestamp - previousDrawing <= 200) {
-    return;
-  }
-  previousDrawing = timestamp;
-  if (mark.isDead) {
-    mark.removeTailTip();
-    grid.draw();
-    console.log("Helo");
-
-    return;
-  }
-  mark.move();
-  grid.draw();
-}
